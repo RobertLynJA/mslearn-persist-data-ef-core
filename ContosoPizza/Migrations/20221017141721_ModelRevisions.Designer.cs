@@ -3,6 +3,7 @@ using System;
 using ContosoPizza.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContosoPizza.Migrations
 {
     [DbContext(typeof(PizzaContext))]
-    partial class PizzaContextModelSnapshot : ModelSnapshot
+    [Migration("20221017141721_ModelRevisions")]
+    partial class ModelRevisions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
@@ -44,9 +46,6 @@ namespace ContosoPizza.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsVegan")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -63,32 +62,19 @@ namespace ContosoPizza.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Calories")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("PizzaId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("PizzaId");
+
                     b.ToTable("Toppings");
-                });
-
-            modelBuilder.Entity("PizzaTopping", b =>
-                {
-                    b.Property<int>("PizzasId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ToppingsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("PizzasId", "ToppingsId");
-
-                    b.HasIndex("ToppingsId");
-
-                    b.ToTable("PizzaTopping");
                 });
 
             modelBuilder.Entity("ContosoPizza.Models.Pizza", b =>
@@ -100,19 +86,16 @@ namespace ContosoPizza.Migrations
                     b.Navigation("Sauce");
                 });
 
-            modelBuilder.Entity("PizzaTopping", b =>
+            modelBuilder.Entity("ContosoPizza.Models.Topping", b =>
                 {
                     b.HasOne("ContosoPizza.Models.Pizza", null)
-                        .WithMany()
-                        .HasForeignKey("PizzasId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Toppings")
+                        .HasForeignKey("PizzaId");
+                });
 
-                    b.HasOne("ContosoPizza.Models.Topping", null)
-                        .WithMany()
-                        .HasForeignKey("ToppingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("ContosoPizza.Models.Pizza", b =>
+                {
+                    b.Navigation("Toppings");
                 });
 #pragma warning restore 612, 618
         }
